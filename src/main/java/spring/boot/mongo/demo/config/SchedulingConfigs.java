@@ -11,7 +11,6 @@ import org.springframework.scheduling.TriggerContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-import org.springframework.scheduling.config.ScheduledTask;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
 import spring.boot.mongo.demo.document.ScheduleJobDetails;
 import spring.boot.mongo.demo.repository.ScheduleJobRepository;
@@ -20,7 +19,6 @@ import spring.boot.mongo.demo.scheduler.SchedulerTasks;
 import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Optional;
 
 @Configuration
@@ -37,32 +35,28 @@ public class SchedulingConfigs implements SchedulingConfigurer {
 
     @Override
     public void configureTasks(ScheduledTaskRegistrar taskRegistrar) {
-        taskRegistrar.addTriggerTask(new Runnable() {
-                                         @Override
-                                         public void run() {
-                                             schedulerTasks.checkSchedulejob();
-                                             logger.info("Running Scheduler... {}", Calendar.getInstance().getTime());
-                                         }
-                                     },
-                new Trigger() {
-                    @Override
-                    public Instant nextExecution(TriggerContext triggerContext) {
-                        Date lastExecutionTime = triggerContext.lastScheduledExecutionTime();
-                        long newInterval = 10000;
-                        logger.info("getting the interval details from DB");
-                        Optional<ScheduleJobDetails> test = scheduleJobRepository.findByjobName("TEST");
-                        if (test.isPresent()) {
-                            ScheduleJobDetails scheduleJobDetails = test.get();
-                            logger.info("new interval: {}", scheduleJobDetails.getInterval());
-                            newInterval = scheduleJobDetails.getInterval();
-                        }
-                        if (lastExecutionTime == null) {
-                            return new Date(System.currentTimeMillis()).toInstant(); // Schedule immediately if never executed
-                        } else {
-                            return new Date(lastExecutionTime.getTime() + newInterval).toInstant(); // Schedule every 10 seconds
-                        }
-                    }
-                });
+//        taskRegistrar.addTriggerTask(() -> {
+//            schedulerTasks.checkSchedulejob();
+//            logger.info("Running Scheduler... {}", Calendar.getInstance().getTime());
+//        }, new Trigger() {
+//            @Override
+//            public Instant nextExecution(TriggerContext triggerContext) {
+//                Date lastExecutionTime = triggerContext.lastScheduledExecutionTime();
+//                long newInterval = 10000;
+//                logger.info("getting the interval details from DB");
+//                Optional<ScheduleJobDetails> test = scheduleJobRepository.findByjobName("TEST");
+//                if (test.isPresent()) {
+//                    ScheduleJobDetails scheduleJobDetails = test.get();
+//                    logger.info("new interval: {}", scheduleJobDetails.getInterval());
+//                    newInterval = scheduleJobDetails.getInterval();
+//                }
+//                if (lastExecutionTime == null) {
+//                    return new Date(System.currentTimeMillis()).toInstant(); // Schedule immediately if never executed
+//                } else {
+//                    return new Date(lastExecutionTime.getTime() + newInterval).toInstant(); // Schedule every 10 seconds
+//                }
+//            }
+//        });
     }
 
 
