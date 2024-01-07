@@ -6,7 +6,7 @@ import java.util.*;
 public class _TreeMap {
 
     public static void main(String... args) {
-        Set<Movie> list = new TreeSet<>();
+        Set<Movie> list = new TreeSet<>((Movie m1, Movie m2) ->  (m1.getName()).compareTo(m2.getName()));
         list.add(new Movie("Force Awakens", 8.3, 2015));
         list.add(new Movie("Star Wars", 8.7, 1977));
         list.add(new Movie("Empire Strikes Back", 8.8, 1980));
